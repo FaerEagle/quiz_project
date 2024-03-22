@@ -42,10 +42,20 @@ a {
     border: 0;
     transition: .4s;
     cursor: pointer;
+    text-decoration: none;
+}
+
+a.button {
+    display: inline-block;
 }
 
 .button:hover {
     background: #32098a;
+}
+
+.button:disabled {
+    background-color: #e2dfe7;
+    cursor: not-allowed;
 }
 
 .button-transparent {
@@ -57,6 +67,12 @@ a {
 .button-transparent:hover {
     background: #6933dc;
     color: #fff;
+}
+
+.button-transparent:disabled {
+    background: transparent;
+    color: #e2dfe7;
+    border: 1px solid #e2dfe7;
 }
 
 .big-title {
