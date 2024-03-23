@@ -101,3 +101,16 @@
 .pass-question {
     margin-top: 10px;
 }
+
+.pass-question.disabled svg path {
+    fill: #dcdcf3;
+}
+
+.pass-question.disabled {
+    cursor: default;
+    pointer-events: none;
+}
+
+.pass-question.disabled a {
+    color: #dcdcf3;
+}

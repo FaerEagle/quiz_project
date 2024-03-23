@@ -2,6 +2,7 @@
     const Test = {
         progressBarElement: null,
         questionTitleElement: null,
+        optionsElement: null,
         nextButtonElement: null,
         prevButtonElement: null,
         passButtonElement: null,
@@ -10,8 +11,7 @@
         userResult: [],
         init() {
             checkUserData();
-            const url = new URL(location.href);
-            const testId = url.searchParams.get('id');
+            const testId = sessionStorage.getItem('testId');
             if (testId) {
                 const xhr = new XMLHttpRequest();
                 xhr.open('GET', 'https://testologia.site/get-quiz?id=' + testId, false);
@@ -111,10 +111,13 @@
 
                 this.optionsElement.appendChild(optionElement);
             });
+
             if (chosenOption && chosenOption.chosenAnswerId) {
                 this.nextButtonElement.removeAttribute('disabled');
+                this.passButtonElement.parentNode.classList.add('disabled');
             } else {
                 this.nextButtonElement.setAttribute('disabled', 'disabled');
+                this.passButtonElement.parentNode.classList.remove('disabled');
             }
             if (this.currentQuestionIndex === this.quiz.questions.length) {
                 this.nextButtonElement.innerText = 'Завершить';
@@ -129,6 +132,7 @@
         },
         chooseAnswer() {
             this.nextButtonElement.removeAttribute('disabled');
+            this.passButtonElement.parentNode.classList.add('disabled');
         },
         move(action) {
             const activeQuestion = this.quiz.questions[this.currentQuestionIndex - 1];
@@ -180,21 +184,25 @@
             this.showQuestion();
         },
         complete() {
-            const url = new URL(location.href);
-            const id = url.searchParams.get('id');
-            const name = url.searchParams.get('name');
-            const lastName = url.searchParams.get('lastName');
-            const email = url.searchParams.get('email');
-
-            const xhr = new XMLHttpRequest;
-            xhr.open('POST', 'https://testologia.site/pass-quiz?id=' + id, false);
-            xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-            xhr.send(JSON.stringify({
+            const id = sessionStorage.getItem('testId');
+            const name = sessionStorage.getItem('name');
+            const lastName = sessionStorage.getItem('lastName');
+            const email = sessionStorage.getItem('email');
+            const data = JSON.stringify({
                 name: name,
                 lastName: lastName,
                 email: email,
                 results: this.userResult
+            });
+
+            sessionStorage.setItem('results', JSON.stringify({
+                results: this.userResult,
             }));
+
+            const xhr = new XMLHttpRequest;
+            xhr.open('POST', 'https://testologia.site/pass-quiz?id=' + id, false);
+            xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+            xhr.send(data);
 
             if (xhr.status === 200 && xhr.responseText) {
                 let result = null;
@@ -204,7 +212,9 @@
                     location.href = 'index.html';
                 }
                 if (result) {
-                    location.href = 'result.html?score=' + result.score + '&total=' + result.total;
+                    sessionStorage.setItem('score', result.score);
+                    sessionStorage.setItem('total', result.total);
+                    location.href = 'result.html';
                 }
             } else {
                 location.href = 'index.html';
