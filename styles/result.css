@@ -1,6 +1,6 @@
 .result {
     padding-top: 140px;
-    padding-bottom: 91px;
+    padding-bottom: 31px;
     text-align: center;
 }
 
@@ -13,7 +13,7 @@
 
 .result-image {
     position: absolute;
-    top: 225px;
+    top: 85px;
     z-index: -1;
 }
 
@@ -35,4 +35,9 @@
     line-height: 190px;
     color: #fff;
     font-family: "Museo Sans Cyrl Bold", sans-serif;
+}
+
+.go-to-check-result {
+    margin-top: 80px;
+    align-self: flex-end;
 }
