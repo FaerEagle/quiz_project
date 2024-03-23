@@ -91,8 +91,60 @@ a.button {
     line-height: 58px;
 }
 
+.pre-title {
+    font-size: 20px;
+    line-height: 24px;
+    color: #dcdcf3;
+}
+
 .common-title span {
     color: #6933dc;
+}
+
+.test-question-title {
+    font-size: 36px;
+    line-height: 43px;
+    font-family: "Museo Sans Cyrl Bold", sans-serif;
+}
+
+.test-question-title span {
+    color: #6933dc;
+}
+
+.test-question-options {
+    margin-top: 40px;
+}
+
+.test-question-option {
+    font-size: 20px;
+    line-height: 24px;
+    margin-bottom: 20px;
+    display: flex;
+}
+
+.test-question-option label {
+    cursor: pointer;
+}
+
+.link-action {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.link-action a {
+    font-size: 17px;
+    line-height: 20px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.link-action a:hover {
+    text-decoration: underline;
+}
+
+.link-action a img {
+    margin-left: 13px;
 }
 
 .footer {
@@ -101,4 +153,32 @@ a.button {
     font-size: 13px;
     line-height: 16px;
     color: #dcdcf3;
+}
+
+input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #6933dc;
+    border-radius: 50%;
+    margin: 0 13px 0 0;
+    transform: translateY(2px);
+
+    display: grid;
+    place-content: center;
+}
+
+input[type="radio"]::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    box-shadow: inset 10px 10px #6933dc;
+    transition: .2s ease transform;
+    transform: scale(0);
+}
+
+input[type="radio"]:checked::before {
+    transform: scale(1);
 }
