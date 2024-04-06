@@ -18,7 +18,7 @@
     max-width: 485px;
 }
 
-.from-group {
+.form-group {
     background: #fff;
     border: 1px solid #c1bbbb;
     padding: 12px 23px 13px 23px;
@@ -63,7 +63,7 @@
     height: auto;
 }
 
-.from-group:focus-within {
+.form-group:focus-within {
     border-left: 5px solid #6933dc;
 }
 
@@ -84,5 +84,11 @@
 }
 
 .form-button {
-    margin-top: 60px;
+    margin-top: 30px;
+}
+
+.form-link {
+    margin-top: 15px;
+    font-size: 12px;
+    line-height: 14px;
 }
