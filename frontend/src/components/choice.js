@@ -7,8 +7,8 @@ export class Choice {
 
     constructor() {
         this.quizzes = [];
+        this.queryParams = UrlManager.getQueryParams();
         this.testResult = null;
-        UrlManager.getQueryParams();
 
         this.init();
     }
@@ -90,14 +90,7 @@ export class Choice {
     chooseQuiz(element) {
         const dataId = element.getAttribute('data-id');
         if (dataId) {
-            sessionStorage.setItem('testId', dataId);
-            location.href = '#/test';
+            location.href = '#/test?id=' + dataId;
         }
-        /*Вариант условия для работы с URL-параметрами
-        if (dataId) {
-                location.href = '#/test?name=' + this.routeParams.name + '&lastName=' + this.routeParams.lastName +
-                '&email=' + this.routeParams.email + '&id=' + dataId;
-        }*/
-
     }
 }

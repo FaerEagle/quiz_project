@@ -1,6 +1,7 @@
 import {CustomHttp} from "../services/custom-http";
 import config from "../../config/config.js";
 import {Auth} from "../services/auth.js";
+import {UrlManager} from "../utils/url-manager";
 
 export class Test {
 
@@ -14,15 +15,15 @@ export class Test {
         this.quiz = null;
         this.currentQuestionIndex = 1;
         this.userResult = [];
-        this.testId = sessionStorage.getItem('testId');
+        this.routeParams = UrlManager.getQueryParams();
 
         this.init();
     }
 
     async init() {
-        if (this.testId) {
+        if (this.routeParams.id) {
             try {
-                const result = await CustomHttp.request(config.host + '/tests/' + this.testId);
+                const result = await CustomHttp.request(config.host + '/tests/' + this.routeParams.id);
 
                 if (result) {
                     if (result.error) {
@@ -203,7 +204,7 @@ export class Test {
         }
 
         try {
-            const result = await CustomHttp.request(config.host + '/tests/' + this.testId + '/pass', "POST",
+            const result = await CustomHttp.request(config.host + '/tests/' + this.routeParams.id + '/pass', "POST",
                 {
                     userId: userInfo.userId,
                     results: this.userResult
@@ -213,7 +214,7 @@ export class Test {
                 if (result.error) {
                     throw new Error(result.message)
                 }
-                location.href = '#/result';
+                location.href = '#/result?id=' + this.routeParams.id;
             }
         } catch (error) {
             console.log(error);

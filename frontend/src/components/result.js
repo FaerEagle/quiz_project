@@ -1,27 +1,29 @@
 import {CustomHttp} from "../services/custom-http";
 import config from "../../config/config";
 import {Auth} from "../services/auth";
+import {UrlManager} from "../utils/url-manager";
 
 export class Result {
 
     constructor() {
         this.checkAnswersLink = null;
-        this.testId = sessionStorage.getItem('testId');
-
         this.checkAnswersLink = document.getElementById('answers');
-        this.checkAnswersLink.onclick = this.checkAnswers;
+        this.checkAnswersLink.onclick = this.checkAnswers.bind(this);
+        this.routeParams = UrlManager.getQueryParams();
+
         this.init();
     }
 
     async init() {
         const userInfo = Auth.getUserInfo();
+
         if (!userInfo) {
             location.href = '#/';
         }
 
-        if (this.testId) {
+        if (this.routeParams.id) {
             try {
-                const result = await CustomHttp.request(config.host + '/tests/' + this.testId + '/result?userId=' + userInfo.userId);
+                const result = await CustomHttp.request(config.host + '/tests/' + this.routeParams.id + '/result?userId=' + userInfo.userId);
 
                 if (result) {
                     if (result.error) {
@@ -39,6 +41,6 @@ export class Result {
     }
 
     checkAnswers() {
-        return location.href = '#/check-result';
+        return location.href = '#/check-result?id=' + this.routeParams.id;
     }
 }

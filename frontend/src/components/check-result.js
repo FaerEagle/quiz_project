@@ -1,4 +1,7 @@
 import {UrlManager} from "../utils/url-manager.js";
+import {CustomHttp} from "../services/custom-http.js";
+import config from "../../config/config.js";
+import {Auth} from "../services/auth.js";
 
 export class Check {
 
@@ -8,37 +11,45 @@ export class Check {
         this.returnToResultLink = null;
         this.questionsElement = null;
         this.userResult = JSON.parse(sessionStorage.getItem('results'));
+        this.routeParams = UrlManager.getQueryParams();
+        this.userInfo = Auth.getUserInfo();
 
-        UrlManager.checkUserData();
-        const testId = sessionStorage.getItem('testId');
-        if (testId) {
-            const xhrQuiz = new XMLHttpRequest();
-            const xhrAnswers = new XMLHttpRequest();
-            xhrQuiz.open('GET', 'https://testologia.site/get-quiz?id=' + testId, false);
-            xhrAnswers.open('GET', 'https://testologia.site/get-quiz-right?id=' + testId, false);
-            xhrQuiz.send();
-            xhrAnswers.send();
+        this.returnToResultLink = document.getElementById('return');
+        this.returnToResultLink.onclick = this.returnToResult.bind(this);
+        this.init();
+    }
 
-            if (xhrQuiz.status === 200 && xhrQuiz.responseText && xhrAnswers.status === 200 && xhrAnswers.responseText) {
-                try {
-                    this.quiz = JSON.parse(xhrQuiz.responseText);
-                    this.rightAnswers = JSON.parse(xhrAnswers.responseText);
-                } catch (e) {
-                    location.href = '#/';
-                }
-                this.showQuestions();
-            } else {
-                location.href = '#/';
-            }
-        } else {
+    async init() {
+
+        if (!this.userInfo) {
             location.href = '#/';
         }
-        this.returnToResultLink = document.getElementById('return');
-        this.returnToResultLink.onclick = this.returnToResult;
+
+        if (this.routeParams.id) {
+
+            try {
+                const result = await CustomHttp.request(config.host + '/tests/' + this.routeParams.id + '/result/details?userId=' + this.userInfo.userId);
+
+                if (result) {
+                    if (result.error) {
+                        throw new Error(result.error)
+                    }
+                    this.quiz = result.test;
+                    if (this.quiz) {
+                        this.showQuestions();
+                    }
+                    return;
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        location.href = '#/';
     }
 
     returnToResult() {
-        return location.href = '#/result';
+        return location.href = '#/result?id=' + this.routeParams.id;
     }
 
     showQuestions() {
@@ -46,8 +57,7 @@ export class Check {
         const questions = this.quiz.questions;
         this.questionsElement = document.getElementById('questions');
         document.getElementById('test-name').innerText = this.quiz.name;
-        document.getElementById('user-data').innerText = sessionStorage.getItem('name') +
-            ' ' + sessionStorage.getItem('lastName') + ', ' + sessionStorage.getItem('email');
+        document.getElementById('user-data').innerText = this.userInfo.fullName + ', ' + this.userInfo.email;
         this.questionsElement.innerHTML = '';
         questions.forEach(question => {
             const questionElement = document.createElement('div');
@@ -60,7 +70,6 @@ export class Check {
             questionElement.appendChild(questionTitleElement);
 
             question.answers.forEach((answer) => {
-                const chosenOption = this.userResult.results.find(item => item.questionId === question.id);
                 const optionElement = document.createElement('div');
                 optionElement.className = 'check-test-question-option test-question-option';
 
@@ -72,9 +81,9 @@ export class Check {
                 inputElement.setAttribute('name', 'answer-' + question.id);
                 inputElement.setAttribute('value', answer.id);
                 inputElement.setAttribute('disabled', 'disabled');
-                if (chosenOption && chosenOption.chosenAnswerId === answer.id && chosenOption.chosenAnswerId === that.rightAnswers[question.id - 1]) {
+                if (answer.correct) {
                     optionElement.classList.add('right');
-                } else if (chosenOption && chosenOption.chosenAnswerId === answer.id) {
+                } else if (answer.hasOwnProperty('correct') && !answer.correct) {
                     optionElement.classList.add('wrong');
                 }
 

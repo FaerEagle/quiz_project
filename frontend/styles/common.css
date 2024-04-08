@@ -207,3 +207,7 @@ input[type="radio"]::before {
 input[type="radio"]:checked::before {
     transform: scale(1);
 }
+
+#answer-42 {
+    width: 25px;
+}
